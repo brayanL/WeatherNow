@@ -25,3 +25,13 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    library = '26.1.0'
+    constraint_layout = '1.0.2'
+    dexter = '4.2.0'
+    butterknife = '8.8.1'
+    dagger2 = '2.10'
+    retrofit = '2.3.0'
+    rxjava = '1.3.5'
+}

@@ -20,8 +20,31 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    //noinspection GradleCompatible
+    implementation "com.android.support:appcompat-v7:$rootProject.ext.library"
+    implementation "com.android.support:support-v4:$rootProject.library"
+    implementation "com.android.support.constraint:constraint-layout:$rootProject.ext.constraint_layout"
+
+    //dexter
+    implementation "com.karumi:dexter:$rootProject.ext.dexter"
+
+    //dagger2
+    implementation "com.google.dagger:dagger:$rootProject.ext.dagger2"
+    annotationProcessor "com.google.dagger:dagger-compiler:$rootProject.ext.dagger2"
+
+    //butterknife
+    implementation "com.jakewharton:butterknife:$rootProject.ext.butterknife"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.ext.butterknife"
+
+    //retrofit
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.ext.retrofit"
+
+    //retrofit converter to gson
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.ext.retrofit"
+
+    //rxjava
+    implementation "io.reactivex:rxjava:$rootProject.ext.rxjava"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
