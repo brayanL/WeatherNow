@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">WeatherNow</string>
+
+    <!--Permissions Dexter-->
+    <string name="denied_permission_permanently">No puede acceder a esta funcionalidad, ha negado         los permisos. Debe activar los permisos manualmente</string>
+    <string name="place">QUITO</string>
+    <string name="degrees_celsius">90º</string>
+
+    <string name="humidity_title">HUMIDITY</string>
+    <string name="precipitation_title">PRECIPITATION</string>
+
+    <string name="humidity_description">description</string>
+    <string name="precipitation_description">description</string>
+    <string name="summary">Summary</string>
+    <string name="permission_location_error">No ha concedido permisos para su Ubicacion</string>
 </resources>
