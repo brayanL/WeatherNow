@@ -12,5 +12,11 @@
     <string name="humidity_description">description</string>
     <string name="precipitation_description">description</string>
     <string name="summary">Summary</string>
-    <string name="permission_location_error">No ha concedido permisos para su Ubicacion</string>
+
+    <!--Location-->
+    <string name="permission_location_error">No ha concedido permisos para su Ubicacion</string>\
+    <string name="permission_location_success"></string>
+    <string name="error_play_services">Debe actualizar o instalar Google Play Services</string>
+    <string name="error_not_available_play_services">Este dispositivo no Soporta Google Play Services</string>
+
 </resources>
