@@ -10,7 +10,9 @@ import javax.inject.Singleton;
 
 import creapption.com.weathernow.BuildConfig;
 import creapption.com.weathernow.data.DataManager;
+import creapption.com.weathernow.data.remote.WeatherNowDeserializer;
 import creapption.com.weathernow.data.remote.WeatherNowService;
+import creapption.com.weathernow.data.remote.api.WeatherData;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
@@ -53,11 +55,12 @@ public class DomainModule {
 
         //Todo: add deserializer
         final GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(WeatherData.class, new WeatherNowDeserializer());
         gsonBuilder.excludeFieldsWithoutExposeAnnotation();
 
         return new Retrofit.Builder()
                 .baseUrl(BuildConfig.WEATHERNOW_ENDPOINT)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gsonBuilder.create()))
                 .client(customOkHttpClient)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build()

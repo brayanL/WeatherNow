@@ -56,6 +56,9 @@ dependencies {
     //rxjava
     implementation "io.reactivex:rxjava:$rootProject.ext.rxjava"
 
+    //rxandroid
+    implementation "io.reactivex:rxandroid:$rootProject.ext.rxandroid"
+
     //rxjava adapter retrofit
     implementation "com.squareup.retrofit2:adapter-rxjava:$rootProject.ext.retrofit"
 

@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/degrees_celsius"
                 android:gravity="center_horizontal"
-                android:textSize="150sp"
+                android:textSize="120sp"
                 android:textColor="@color/colorWhite"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"/>
@@ -76,7 +76,7 @@
                         android:text="@string/humidity_title"/>
 
                     <TextView
-                        android:id="@+id/textView4"
+                        android:id="@+id/humidity"
                         style="@style/TitleWeather"
                         android:text="@string/humidity_description" />
                 </LinearLayout>
@@ -93,7 +93,7 @@
                         android:text="@string/precipitation_title" />
 
                     <TextView
-                        android:id="@+id/textView7"
+                        android:id="@+id/precipitation"
                         style="@style/TitleWeather"
                         android:text="@string/precipitation_description" />
                 </LinearLayout>

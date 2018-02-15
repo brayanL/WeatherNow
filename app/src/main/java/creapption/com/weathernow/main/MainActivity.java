@@ -39,6 +39,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import creapption.com.weathernow.R;
 import creapption.com.weathernow.WeathernowApplication;
+import creapption.com.weathernow.data.remote.api.WeatherData;
 import creapption.com.weathernow.util.CommonUtils;
 import creapption.com.weathernow.util.PermissionsDexter;
 
@@ -47,6 +48,15 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
 
     @BindView(R.id.permission_error_message)
     TextView permissionErrorMessage;
+    @BindView(R.id.temperature)
+    TextView temperature;
+    @BindView(R.id.summary)
+    TextView summary;
+    @BindView(R.id.humidity)
+    TextView humidity;
+    @BindView(R.id.precipitation)
+    TextView precipitation;
+
 
     private PermissionsDexter mPermissionsDexter;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -60,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
 
     public static final String TAG = "PERMISSIONS";
 
+    //life cycle activity override methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
     protected void onResume() {
         super.onResume();
         if (checkLocationPermissions()) {
-            if(checkGooglePlayServices()){
+            if (checkGooglePlayServices()) {
                 startLocationUpdates();
             }
         }
@@ -84,6 +95,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
     protected void onPause() {
         super.onPause();
         stopLocationUpdates();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
     }
 
     @Override
@@ -101,15 +118,24 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
     @OnClick(R.id.permission_error_message)
     public void onViewClicked() {
         Log.d(TAG, "onViewClicked: permissions");
-        if(!checkLocationPermissions()){
+        if (!checkLocationPermissions()) {
             mPermissionsDexter.permissionAccessLocation();
         }
+    }
+
+    @Override
+    public void updateUI(WeatherData weatherData) {
+        temperature.setText(String.valueOf(Math.round(weatherData.getTemperature())));
+        summary.setText(String.valueOf(weatherData.getSummary().replace("\"", "")));
+        humidity.setText(String.valueOf(weatherData.getHumidity()));
+        precipitation.setText(String.valueOf(weatherData.getPrecipProbability()));
+
     }
 
     private Boolean checkLocationPermissions() {
         int permissionState = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
-        Log.d(TAG, "checkLocationPermissions: "+permissionState);
+        Log.d(TAG, "checkLocationPermissions: " + permissionState);
         return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
@@ -118,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
         mPermissionsDexter.permissionAccessLocation();
     }
 
-    private Boolean checkGooglePlayServices(){
+    private Boolean checkGooglePlayServices() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
@@ -131,8 +157,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
                         getString(R.string.error_not_available_play_services));
             }
             return false;
-        }
-        else {
+        } else {
             //updateMessages(R.string.permission_location_success, View.VISIBLE);
             return true;
         }
@@ -146,7 +171,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
                 super.onLocationResult(locationResult);
 
                 mCurrentLocation = locationResult.getLastLocation();
-                Log.d(TAG, "onLocationResult: "+mCurrentLocation.getLatitude()+ ", "+mCurrentLocation.getLatitude());
+                presenter.getWeather(mCurrentLocation);
+                Log.d(TAG, "onLocationResult: " + mCurrentLocation.getLatitude() + ", " + mCurrentLocation.getLongitude());
             }
         };
     }
@@ -154,12 +180,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
     /**
      * more info:https://developers.google.com/android/reference/com/google
      * /android/gms/location/LocationRequest#setInterval(long)
-    * */
+     */
 
     private void startLocationUpdates() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(10000);
+        mLocationRequest.setInterval(20000);
+        mLocationRequest.setFastestInterval(20000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
@@ -203,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
     }
 
     private void stopLocationUpdates() {
-        if(checkLocationPermissions()){
+        if (checkLocationPermissions()) {
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
         }
     }
