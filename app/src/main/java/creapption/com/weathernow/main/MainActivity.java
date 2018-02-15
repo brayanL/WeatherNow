@@ -32,10 +32,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import creapption.com.weathernow.R;
+import creapption.com.weathernow.WeathernowApplication;
 import creapption.com.weathernow.util.CommonUtils;
 import creapption.com.weathernow.util.PermissionsDexter;
 
@@ -52,6 +55,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
     private LocationCallback mLocationCallback;
     private LocationRequest mLocationRequest;
 
+    @Inject
+    MainActivityPresenter presenter;
+
     public static final String TAG = "PERMISSIONS";
 
     @Override
@@ -59,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        setUpInjection();
         initDexter();
         locationConfig();
     }
@@ -201,7 +208,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
         }
     }
 
-    public void setCurrentLocation() {
+    private void setUpInjection() {
+        WeathernowApplication app = (WeathernowApplication) this.getApplication();
+        app.getMainActivityComponent(this).inject(this);
+    }
+
+    private void setCurrentLocation() {
         try {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                     mLocationCallback, Looper.myLooper());

@@ -35,4 +35,5 @@ ext {
     retrofit = '2.3.0'
     rxjava = '1.3.5'
     googlePlayServices = '11.8.0'
+    okHttpVersion = '3.9.1'
 }

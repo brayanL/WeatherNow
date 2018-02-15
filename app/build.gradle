@@ -12,9 +12,19 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
+        debug{
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            versionNameSuffix "Debug"
+            debuggable true
+            buildConfigField "String", "WEATHERNOW_ENDPOINT",
+                    "\"https://api.darksky.net/forecast/4e0fb819a93acf0b5b714d2d1be77cb0/\""
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "WEATHERNOW_ENDPOINT",
+                    "\"https://api.darksky.net/forecast/4e0fb819a93acf0b5b714d2d1be77cb0/\""
         }
     }
 }
@@ -46,8 +56,15 @@ dependencies {
     //rxjava
     implementation "io.reactivex:rxjava:$rootProject.ext.rxjava"
 
+    //rxjava adapter retrofit
+    implementation "com.squareup.retrofit2:adapter-rxjava:$rootProject.ext.retrofit"
+
     //google play services
     implementation "com.google.android.gms:play-services-location:$rootProject.ext.googlePlayServices"
+
+    //okhttp
+    implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.ext.okHttpVersion"
+    implementation "com.squareup.okhttp3:okhttp-urlconnection:$rootProject.ext.okHttpVersion"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
