@@ -1,9 +1,6 @@
 package creapption.com.weathernow.util;
 
 import android.Manifest;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.view.View;
 
 import com.karumi.dexter.Dexter;
@@ -16,10 +13,8 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import creapption.com.weathernow.R;
 import creapption.com.weathernow.main.MainActivity;
 
-import static android.content.ContentValues.TAG;
-
 /**
- * Created by boma24 on 2/7/18.
+ * Controls the permissions granted by users to the application, through the Dexter library.
  */
 
 public class PermissionsDexter {
@@ -40,13 +35,13 @@ public class PermissionsDexter {
     private PermissionListener listenerLocation = new PermissionListener() {
         @Override
         public void onPermissionGranted(PermissionGrantedResponse response) {
-            mainActivity.updateMessages(View.VISIBLE, R.string.permission_location_success);
+            mainActivity.updateMessages(View.INVISIBLE, R.string.success_messages);
         }
 
         @Override
         public void onPermissionDenied(PermissionDeniedResponse response) {
             if(response.isPermanentlyDenied()){
-                mainActivity.deniedPermanentlyPermissionMessage();
+                mainActivity.toastMessages(R.string.denied_permission_permanently);
             }else{
                 mainActivity.updateMessages(View.VISIBLE, R.string.permission_location_error);
             }
@@ -55,7 +50,6 @@ public class PermissionsDexter {
         @Override
         public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
             token.continuePermissionRequest();
-            Log.d(TAG, "onPermissionRationaleShouldBeShown: ");
         }
     };
 }

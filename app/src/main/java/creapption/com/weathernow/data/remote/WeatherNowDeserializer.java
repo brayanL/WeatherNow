@@ -15,7 +15,7 @@ import creapption.com.weathernow.data.remote.api.WeatherData;
 import static creapption.com.weathernow.main.MainActivity.TAG;
 
 /**
- * Created by boma24 on 2/15/18.
+ * Captures the data consumed by the rest API and deserialize it and creates the respective object.
  */
 
 public class WeatherNowDeserializer implements JsonDeserializer<WeatherData> {

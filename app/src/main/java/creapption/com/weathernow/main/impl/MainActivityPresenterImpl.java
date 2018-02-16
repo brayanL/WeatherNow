@@ -2,7 +2,9 @@ package creapption.com.weathernow.main.impl;
 
 import android.location.Location;
 import android.util.Log;
+import android.view.View;
 
+import creapption.com.weathernow.R;
 import creapption.com.weathernow.data.DataManager;
 import creapption.com.weathernow.data.remote.api.WeatherData;
 import creapption.com.weathernow.main.MainActivityPresenter;
@@ -30,24 +32,22 @@ public class MainActivityPresenterImpl implements MainActivityPresenter {
 
     @Override
     public void getWeather(Location location) {
-        Log.d(TAG, "getWeather: Presenter Here");
         mSubscription = dataManager.getWeather(location)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<WeatherData>() {
                     @Override
                     public void onCompleted() {
                         Log.d(TAG, "onCompleted: ");
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        mainActivityView.toastMessages(R.string.not_get_info_api);
                         Log.e(TAG, "onError: ", e);
                     }
 
                     @Override
                     public void onNext(WeatherData weatherData) {
-                        Log.d(TAG, "onNext: "+weatherData.getSummary());
                         mainActivityView.updateUI(weatherData);
                     }
                 });

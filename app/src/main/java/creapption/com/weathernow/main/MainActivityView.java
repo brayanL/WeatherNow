@@ -9,7 +9,7 @@ import creapption.com.weathernow.data.remote.api.WeatherData;
  */
 
 public interface MainActivityView {
-    void deniedPermanentlyPermissionMessage();
     void updateMessages(int visible, @StringRes int message);
+    void toastMessages(@StringRes int message);
     void updateUI(WeatherData weatherData);
 }

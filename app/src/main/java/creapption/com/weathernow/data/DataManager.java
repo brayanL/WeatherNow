@@ -6,9 +6,8 @@ import creapption.com.weathernow.data.remote.WeatherNowService;
 import creapption.com.weathernow.data.remote.api.WeatherData;
 import rx.Observable;
 
-
 /**
- * Created by boma24 on 2/10/18.
+ * Bridge between the presenter and the data.
  */
 
 public class DataManager {

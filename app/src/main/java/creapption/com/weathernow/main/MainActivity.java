@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -43,6 +44,11 @@ import creapption.com.weathernow.data.remote.api.WeatherData;
 import creapption.com.weathernow.util.CommonUtils;
 import creapption.com.weathernow.util.PermissionsDexter;
 
+/**
+ * Displays weather information which is consumed through a Web service whose URL is defined in
+ * buildTypes gradle section as WEATHERNOW_ENDPOINT. The Api rest allows up to 1000 calls per day
+ * for being a trial version.
+ * **/
 
 public class MainActivity extends AppCompatActivity implements MainActivityView {
 
@@ -56,6 +62,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
     TextView humidity;
     @BindView(R.id.precipitation)
     TextView precipitation;
+    @BindView(R.id.connection_message)
+    TextView connectionMessage;
+    @BindView(R.id.refresh_location)
+    ImageView refreshLocation;
 
 
     private PermissionsDexter mPermissionsDexter;
@@ -104,32 +114,41 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
     }
 
     @Override
-    public void deniedPermanentlyPermissionMessage() {
-        CommonUtils.showSimpleToastMessages(this,
-                getString(R.string.denied_permission_permanently));
-    }
-
-    @Override
     public void updateMessages(int visible, @IdRes int message) {
         permissionErrorMessage.setVisibility(visible);
         permissionErrorMessage.setText(message);
     }
 
-    @OnClick(R.id.permission_error_message)
-    public void onViewClicked() {
-        Log.d(TAG, "onViewClicked: permissions");
-        if (!checkLocationPermissions()) {
-            mPermissionsDexter.permissionAccessLocation();
+    @OnClick({R.id.permission_error_message, R.id.refresh_location})
+    public void onViewClicked(View view) {
+        switch (view.getId()){
+            case R.id.permission_error_message:
+                if (!checkLocationPermissions()) {
+                    mPermissionsDexter.permissionAccessLocation();
+                }
+            case R.id.refresh_location:
+                if(checkLocationPermissions() &&
+                        CommonUtils.isNetworkAvailable(MainActivity.this)){
+                    presenter.getWeather(mCurrentLocation);
+                }
         }
     }
 
+    /**
+     * update the user interface with the weather information obtained from the api rest.
+     * */
+
     @Override
     public void updateUI(WeatherData weatherData) {
-        temperature.setText(String.valueOf(Math.round(weatherData.getTemperature())));
+        temperature.setText(getString(R.string.temperature, Math.round(weatherData.getTemperature())));
         summary.setText(String.valueOf(weatherData.getSummary().replace("\"", "")));
         humidity.setText(String.valueOf(weatherData.getHumidity()));
         precipitation.setText(String.valueOf(weatherData.getPrecipProbability()));
+    }
 
+    @Override
+    public void toastMessages(int message) {
+        CommonUtils.showSimpleToastMessages(MainActivity.this, getString(message));
     }
 
     private Boolean checkLocationPermissions() {
@@ -144,25 +163,31 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
         mPermissionsDexter.permissionAccessLocation();
     }
 
+    /**
+     * Verify the Google Play Services availability, it is necessary for get current user location
+     * @return if googlePlayServices is available
+     * */
     private Boolean checkGooglePlayServices() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
-            updateMessages(R.string.error_play_services, View.VISIBLE);
+            updateMessages(View.VISIBLE, R.string.error_play_services);
             if (apiAvailability.isUserResolvableError(resultCode)) {
                 apiAvailability.getErrorDialog(this, resultCode,
                         PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
-                CommonUtils.showSimpleToastMessages(this,
-                        getString(R.string.error_not_available_play_services));
+                updateMessages(View.VISIBLE, R.string.error_not_available_play_services);
             }
             return false;
         } else {
-            //updateMessages(R.string.permission_location_success, View.VISIBLE);
+            updateMessages(View.INVISIBLE, R.string.success_messages);
             return true;
         }
     }
 
+    /**
+     * Implements the callback, receive the current user location.
+     * */
     private void locationConfig() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mLocationCallback = new LocationCallback() {
@@ -171,13 +196,22 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
                 super.onLocationResult(locationResult);
 
                 mCurrentLocation = locationResult.getLastLocation();
-                presenter.getWeather(mCurrentLocation);
-                Log.d(TAG, "onLocationResult: " + mCurrentLocation.getLatitude() + ", " + mCurrentLocation.getLongitude());
+                if (CommonUtils.isNetworkAvailable(MainActivity.this)) {
+                    presenter.getWeather(mCurrentLocation);
+                    Log.d(TAG, "onLocationResult: " + mCurrentLocation.getLatitude() + ", " + mCurrentLocation.getLongitude());
+                    connectionMessage.setVisibility(View.GONE);
+                } else {
+                    connectionMessage.setText(getString(R.string.not_internet_connection));
+                    connectionMessage.setVisibility(View.VISIBLE);
+                }
             }
         };
     }
 
     /**
+     * Set parameter for get location updates, the interval was set in 20000 milliseconds for
+     * test purposes. If the GPS is not enabled, system dialog is displayed requesting that it
+     * be activated.
      * more info:https://developers.google.com/android/reference/com/google
      * /android/gms/location/LocationRequest#setInterval(long)
      */
@@ -234,18 +268,20 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
         }
     }
 
-    private void setUpInjection() {
-        WeathernowApplication app = (WeathernowApplication) this.getApplication();
-        app.getMainActivityComponent(this).inject(this);
-    }
-
+    /**
+     * Set the callback the which will receive the location updates.
+     * */
     private void setCurrentLocation() {
         try {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                     mLocationCallback, Looper.myLooper());
         } catch (SecurityException e) {
-            //Todo: set Default Location
             Log.e("TAG1", "onSuccess Error: ", e);
         }
+    }
+
+    private void setUpInjection() {
+        WeathernowApplication app = (WeathernowApplication) this.getApplication();
+        app.getMainActivityComponent(this).inject(this);
     }
 }

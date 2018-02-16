@@ -15,8 +15,11 @@
 
     <!--Location-->
     <string name="permission_location_error">No ha concedido permisos para su Ubicacion</string>\
-    <string name="permission_location_success"></string>
+    <string name="success_messages"></string>
     <string name="error_play_services">Debe actualizar o instalar Google Play Services</string>
     <string name="error_not_available_play_services">Este dispositivo no Soporta Google Play Services</string>
+    <string name="temperature">%1$dº</string>
+    <string name="not_internet_connection">No Dispone de conexión a Internet</string>
+    <string name="not_get_info_api">No se pudo obtener Información del Clima</string>
 
 </resources>
