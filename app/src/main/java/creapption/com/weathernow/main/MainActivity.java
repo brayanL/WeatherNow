@@ -127,8 +127,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
                     mPermissionsDexter.permissionAccessLocation();
                 }
             case R.id.refresh_location:
-                if(checkLocationPermissions() &&
-                        CommonUtils.isNetworkAvailable(MainActivity.this)){
+                if(checkLocationPermissions()
+                        && CommonUtils.isNetworkAvailable(MainActivity.this)
+                        && mCurrentLocation!=null){
                     presenter.getWeather(mCurrentLocation);
                 }
         }
@@ -198,11 +199,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityView 
                 mCurrentLocation = locationResult.getLastLocation();
                 if (CommonUtils.isNetworkAvailable(MainActivity.this)) {
                     presenter.getWeather(mCurrentLocation);
-                    Log.d(TAG, "onLocationResult: " + mCurrentLocation.getLatitude() + ", " + mCurrentLocation.getLongitude());
+                    //Log.d(TAG, "onLocationResult: " + mCurrentLocation.getLatitude() + ", " + mCurrentLocation.getLongitude());
                     connectionMessage.setVisibility(View.GONE);
                 } else {
                     connectionMessage.setText(getString(R.string.not_internet_connection));
                     connectionMessage.setVisibility(View.VISIBLE);
+                    Log.d(TAG, "onLocationResult: No internet connection");
                 }
             }
         };

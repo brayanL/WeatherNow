@@ -9,8 +9,8 @@
     <string name="humidity_title">HUMIDITY</string>
     <string name="precipitation_title">PRECIPITATION</string>
 
-    <string name="humidity_description">description</string>
-    <string name="precipitation_description">description</string>
+    <string name="humidity_description">no available</string>
+    <string name="precipitation_description">no available</string>
     <string name="summary">Summary</string>
 
     <!--Location-->
